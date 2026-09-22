@@ -1,0 +1,106 @@
+<resources>
+    <!-- App name -->
+    <!-- app_name SCEventFishing -->
+
+    <!-- MainActivity -->
+    <string name="root_required_regular">Для Обычного режима требуются Root-права.</string>
+    <string name="go_to_settings">Перейти в настройки</string>
+    <!-- brawl_stars Brawl Stars -->
+    <!-- clash_royale Clash Royale -->
+    <!-- brawl_stars_label Brawl Stars: -->
+    <!-- clash_royale_label Clash Royale: -->
+    <string name="settings_about">Настройки и О программе</string>
+    <string name="menu_description">Меню</string>
+    <string name="more_description">Еще</string>
+    <string name="settings">Настройки</string>
+    <string name="about">О программе</string>
+    <string name="monitored_apps">Мониторинг приложений:</string>
+    <string name="monitored_apps_headline">Мониторинг приложений</string>
+    <string name="refresh_all">Обновить все</string>
+    <string name="not_installed">Не установлено:</string>
+    <string name="copy_all">Копировать все</string>
+    <string name="extract_all">Извлечь все</string>
+    <string name="extract">Извлечь</string>
+    <string name="no_app_selected">Приложение не выбрано</string>
+    <string name="select_app_hint">Выберите приложение из списка, чтобы увидеть его файлы событий.</string>
+    <string name="launch">Запустить</string>
+    <string name="event_files_found">Найдено файлов событий: %1$d</string>
+    <string name="no_event_files">Файлы событий не найдены.</string>
+    <string name="copied_toast">Скопировано: %1$s</string>
+    <string name="copied_items_toast">Скопировано элементов: %1$d</string>
+    <string name="extracted_files_toast">Извлечено файлов: %1$d</string>
+    <string name="could_not_launch">Не удалось запустить</string>
+
+    <!-- SettingsActivity -->
+    <string name="back">Назад</string>
+
+    <!-- General settings section -->
+    <string name="general_settings">Общие настройки</string>
+    <string name="copy_without_link">Копировать без ссылки</string>
+    <string name="copy_without_link_desc">Копировать только имена файлов без префикса</string>
+    <string name="export_folder">Папка для экспорта</string>
+    <string name="export_folder_desc">Выберите, куда сохранять извлеченные файлы</string>
+
+    <!-- Operation mode section -->
+    <string name="operation_mode">Режим работы</string>
+    <string name="app_mode_label">Режим приложения</string>
+    <string name="mode_regular_desc">Требуются Root-права</string>
+    <string name="mode_compat_desc">Без Root (SCHunt)</string>
+    <string name="mode_demo_desc">Демо.</string>
+    <string name="schunt_folder">Папка вывода SCHunt</string>
+    <string name="no_folder_selected">Папка не выбрана</string>
+    <string name="select_folder">Выбрать папку</string>
+
+    <!-- About section -->
+    <string name="about_app_name">Название приложения</string>
+    <string name="about_author">Автор</string>
+    <string name="author_name">Команда SCEventHunters</string>
+    <string name="about_description">Описание</string>
+    <string name="app_description">Инструмент для извлечения и управления ивентовыми ассетами из игр Supercell.</string>
+
+    <!-- Visuals & Language selection -->
+    <string name="theme_system">Системная тема</string>
+    <string name="theme_light">Светлая тема</string>
+    <string name="theme_dark">Темная тема</string>
+    <string name="language">Язык</string>
+    <!-- language_en English -->
+    <!-- language_ru Русский -->
+    <string name="select_language">Выберите язык</string>
+    <string name="visuals">Визуал и язык</string>
+    <string name="select_theme">Выберите тему</string>
+
+    <!-- SCEventFishing for Crona API -->
+    <string name="app_name_crona">SCEventFishing для Crona API</string>
+    <string name="root_access_required">Требуются Root-права</string>
+    <string name="root_required_crona">Для работы приложения требуются Root-права.</string>
+    <string name="server_checking">Проверка…</string>
+    <string name="server_url_not_configured">URL сервера не настроен</string>
+    <string name="server_reachable">Сервер доступен (конечная точка загрузки существует)</string>
+    <string name="server_running">Сервер запущен</string>
+    <string name="server_error_http">Ошибка сервера: HTTP %1$d</string>
+    <string name="server_unreachable_error">Сервер недоступен: %1$s</string>
+    <string name="btn_check_server">Проверить сервер</string>
+    <string name="send">Отправить</string>
+    <string name="send_all">Отправить все</string>
+    <string name="status_sending">Отправка…</string>
+    <string name="desc_app_icon">Иконка %1$s</string>
+    <string name="desc_copy_url">Копировать URL</string>
+    <string name="toast_sent_apps">Отправлено приложений: %1$d/%2$d</string>
+    <string name="toast_sent_files">Отправлено файлов: %1$d</string>
+    <string name="toast_failed">Ошибка: %1$s</string>
+
+    <!-- Legacy -->
+    <string name="enable_overlay">Включить оверлей</string>
+    <string name="no_monitored_apps">Нет установленных отслеживаемых приложений.</string>
+    <string name="root_status_checking">Статус Root: Проверка..</string>
+    <string name="root_granted">Root-права предоставлены.</string>
+    <string name="no_event_files_beta">Файлы .sc не найдены или директория не существует.</string>
+    <string name="no_event_files_cdu">Файлы .sc не найдены.</string>
+    <string name="event_files_found_cdu">Найдено .sc файлов: %1$d</string>
+    <string name="select_app_hint_tablet_update">Выберите установленное приложение из списка слева, чтобы увидеть подробности и найти .sc файлы.</string>
+
+    <!-- Ui fish text -->
+    <string name="mewgenics">Я люблю Mewgenics</string>
+    <string name="mewgenics_long">Я люблю Mewgenics, это крутой рогалик!</string>
+    <string name="mewgenics_extra">Я люблю Mewgenics, это крутой рогалик! Отличная игра от создателей \"The Binding of Isaac\"</string>
+</resources>

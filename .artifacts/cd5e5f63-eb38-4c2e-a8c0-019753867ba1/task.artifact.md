@@ -1,0 +1,5 @@
+- [x] Update `task.artifact.md`
+- [x] Modify `MainScreen.kt`: Remove About section and update navigation to launch Settings with scroll flag
+- [x] Modify `SettingsActivity.kt`: Handle `scrollToAbout` intent extra
+- [x] Modify `SettingsScreen.kt`: Implement auto-scrolling to About section
+- [x] Verify functionality on device

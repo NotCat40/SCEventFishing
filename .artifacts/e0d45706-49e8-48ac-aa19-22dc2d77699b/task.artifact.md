@@ -1,0 +1,4 @@
+- [x] Update `strings.xml` with all identified strings
+- [x] Refactor `MainActivity.kt` to use `stringResource` and `context.getString`
+- [x] Refactor `SettingsActivity.kt` to use `stringResource`
+- [ ] Verify build status

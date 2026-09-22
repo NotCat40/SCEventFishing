@@ -1,0 +1,12 @@
+- [x] Define `AppMode` enum and preference helpers
+- [x] Implement data fetching abstraction (`AppMode` aware)
+- [x] Update `SettingsActivity`:
+    - [x] Mode selection UI
+    - [x] Folder picker trigger for Compatibility mode
+- [x] Update `MainActivity`:
+    - [x] Handle folder picker result and persistent permissions
+    - [x] UI updates (Root warning instead of block, mode indicator)
+    - [x] Update `AppContent` and `AppDetail` to use the new data logic
+- [x] Implement Demo mode mock data
+- [x] Implement Compatibility mode (SAF) file listing
+- [x] Verify all modes

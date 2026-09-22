@@ -1,0 +1,106 @@
+<resources>
+    <!-- App name -->
+    <string name="app_name" translatable="false">SCEventFishing</string>
+
+    <!-- MainActivity -->
+    <string name="root_required_regular">Root access is required for Regular mode.</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="brawl_stars" translatable="false">Brawl Stars</string>
+    <string name="clash_royale" translatable="false">Clash Royale</string>
+    <string name="brawl_stars_label" translatable="false">Brawl Stars:</string>
+    <string name="clash_royale_label" translatable="false">Clash Royale:</string>
+    <string name="settings_about">Settings &amp; About</string>
+    <string name="menu_description">Menu</string>
+    <string name="more_description">More</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="monitored_apps">Monitored Apps:</string>
+    <string name="monitored_apps_headline">Monitored Apps</string>
+    <string name="refresh_all">Refresh All</string>
+    <string name="not_installed">Not Installed:</string>
+    <string name="copy_all">Copy All</string>
+    <string name="extract_all">Extract All</string>
+    <string name="extract">Extract</string>
+    <string name="no_app_selected">No app selected</string>
+    <string name="select_app_hint">Select an app from the list to see its event files.</string>
+    <string name="launch">Launch</string>
+    <string name="event_files_found">%1$d event files found:</string>
+    <string name="no_event_files">No event files found.</string>
+    <string name="copied_toast">Copied: %1$s</string>
+    <string name="copied_items_toast">Copied %1$d items</string>
+    <string name="extracted_files_toast">Extracted %1$d files</string>
+    <string name="could_not_launch">Could not launch</string>
+
+    <!-- SettingsActivity -->
+    <string name="back">Back</string>
+
+    <!-- General settings section -->
+    <string name="general_settings">General Settings</string>
+    <string name="copy_without_link">Copy without link</string>
+    <string name="copy_without_link_desc">Only copy file names without prefix</string>
+    <string name="export_folder">Export folder</string>
+    <string name="export_folder_desc">Select where to save extracted files</string>
+
+    <!-- Operation mode section -->
+    <string name="operation_mode">Operation Mode</string>
+    <string name="app_mode_label">App Mode</string>
+    <string name="mode_regular_desc">Root required</string>
+    <string name="mode_compat_desc">No Root (SCHunt)</string>
+    <string name="mode_demo_desc">Demo.</string>
+    <string name="schunt_folder">SCHunt output folder</string>
+    <string name="no_folder_selected">No folder selected</string>
+    <string name="select_folder">Select Folder</string>
+
+    <!-- About section -->
+    <string name="about_app_name">App Name</string>
+    <string name="about_author">Author</string>
+    <string name="author_name">SCEventHunters team</string>
+    <string name="about_description">Description</string>
+    <string name="app_description">Tool for extracting and managing event assets from Supercell games.</string>
+
+    <!-- Visuals & Language selection -->
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light Theme</string>
+    <string name="theme_dark">Dark Theme</string>
+    <string name="language">Language</string>
+    <string name="language_en" translatable="false">English</string>
+    <string name="language_ru" translatable="false">Русский</string>
+    <string name="select_language">Select Language</string>
+    <string name="visuals">Visuals &amp; Language</string>
+    <string name="select_theme">Select Theme</string>
+
+    <!-- SCEventFishing for Crona API -->
+    <string name="app_name_crona">SCEventFishing for Crona API</string>
+    <string name="root_access_required">Root access required</string>
+    <string name="root_required_crona">Root access is required for this app to function.</string>
+    <string name="server_checking">Checking…</string>
+    <string name="server_url_not_configured">Server URL not configured</string>
+    <string name="server_reachable">Server is reachable (upload endpoint exists)</string>
+    <string name="server_running">Server is running</string>
+    <string name="server_error_http">Server error: HTTP %1$d</string>
+    <string name="server_unreachable_error">Server unreachable: %1$s</string>
+    <string name="btn_check_server">Check Server</string>
+    <string name="status_sending">Sending…</string>
+    <string name="send_all">Send all</string>
+    <string name="send">Send</string>
+    <string name="desc_app_icon">%1$s icon</string>
+    <string name="desc_copy_url">Copy URL</string>
+    <string name="toast_sent_apps">Sent %1$d/%2$d apps</string>
+    <string name="toast_sent_files">Sent %1$d files</string>
+    <string name="toast_failed">Failed: %1$s</string>
+
+    <!-- Legacy -->
+    <string name="enable_overlay">Enable Overlay</string>
+    <string name="no_monitored_apps">No monitored apps installed.</string>
+    <string name="root_status_checking">Root status: Checking..</string>
+    <string name="root_granted">Root access granted.</string>
+    <string name="no_event_files_beta">No .sc files found or directory does not exist.</string>
+    <string name="no_event_files_cdu">No .sc files found.</string>
+    <string name="event_files_found_cdu">%1$d .sc files found:</string>
+    <string name="select_app_hint_tablet_update">Select an installed app from the list on the left to see its details and find .sc files.</string>
+
+    <!-- Ui fish text -->
+    <string name="mewgenics">I love Mewgenics</string>
+    <string name="mewgenics_long">I love Mewgenics, it\'s a cool roguelike!</string>
+    <string name="mewgenics_extra">I love Mewgenics, it\'s a cool roguelike! An excellent game from the creators of "The Binding of Isaac"</string>
+</resources>

@@ -1,0 +1,10 @@
+package com.sceventhunters.sceventfishing.data.model
+
+import android.graphics.drawable.Drawable
+
+data class AppInfo(
+    val appName: String,
+    val packageName: String,
+    val icon: Drawable?,
+    val isInstalled: Boolean
+)

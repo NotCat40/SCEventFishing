@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.SCEventFishing" parent="Theme.Material3.Dark.NoActionBar" />
+</resources>
