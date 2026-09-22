@@ -64,7 +64,7 @@ An Android application designed to inspect, extract, and manage event assets (`.
 ### Сборка из исходников
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/SCEventHunters/SCEventFishing.git
+   git clone https://github.com/NotCat40/SCEventFishing.git
    cd SCEventFishing
    ```
 2. Откройте проект в **Android Studio** (recommended: Hedgehog / Iguana / Ladybug or newer).
