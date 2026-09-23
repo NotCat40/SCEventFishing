@@ -63,7 +63,7 @@
             android:paddingEnd="16dp"
             android:textIsSelectable="true"
             android:textAppearance="?attr/textAppearanceBodyMedium"
-            tools:text="events/eventdata/file1.sc\nevents/eventdata/file2.sc" />
+            tools:text="@string/mewgenics_long" />
 
     </LinearLayout>
 
