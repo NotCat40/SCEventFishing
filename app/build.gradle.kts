@@ -11,8 +11,8 @@ android {
         applicationId = "com.sceventhunters.sceventfishing"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 5
+        versionName = "5.0-tsu"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

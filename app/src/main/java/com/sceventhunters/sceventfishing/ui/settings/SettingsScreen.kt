@@ -413,11 +413,21 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+            val rawVersion = remember {
+                try {
+                    context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "5.0-tsu"
+                } catch (e: Exception) {
+                    "unknown"
+                }
+            }
+            val appVersion = "$rawVersion (${stringResource(R.string.version_codename)})"
+
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     AboutItem(stringResource(R.string.about_app_name), stringResource(R.string.app_name))
+                    AboutItem(stringResource(R.string.about_version), appVersion)
                     AboutItem(stringResource(R.string.about_author), stringResource(R.string.author_name))
                     AboutItem(stringResource(R.string.about_description), stringResource(R.string.app_description))
                     // AboutItem(stringResource(R.string.mewgenics), stringResource(R.string.mewgenics_long))

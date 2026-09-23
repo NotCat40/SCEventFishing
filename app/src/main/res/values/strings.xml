@@ -64,6 +64,8 @@
 
     <!-- About section -->
     <string name="about_app_name">App Name</string>
+    <string name="about_version">Version</string>
+    <string name="version_codename">The Settings Update</string>
     <string name="about_author">Author</string>
     <string name="author_name">SCEventHunters team</string>
     <string name="about_description">Description</string>
