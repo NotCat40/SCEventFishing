@@ -317,6 +317,7 @@ fun SettingsScreen(
                     AboutItem(stringResource(R.string.about_app_name), stringResource(R.string.app_name))
                     AboutItem(stringResource(R.string.about_author), stringResource(R.string.author_name))
                     AboutItem(stringResource(R.string.about_description), stringResource(R.string.app_description))
+                    // AboutItem(stringResource(R.string.mewgenics), stringResource(R.string.mewgenics_long))
                 }
             }
         }
