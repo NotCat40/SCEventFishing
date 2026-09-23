@@ -47,9 +47,20 @@
     <string name="mode_regular_desc">Root required</string>
     <string name="mode_compat_desc">No Root (SCHunt)</string>
     <string name="mode_demo_desc">Demo.</string>
+    <string name="mode_regular_badge" translatable="false">Root</string>
+    <string name="mode_compat_badge" translatable="false">SCHunt</string>
+    <string name="mode_demo_badge">Demo</string>
     <string name="schunt_folder">SCHunt output folder</string>
+    <string name="schunt_folders">SCHunt output folders</string>
+    <string name="schunt_folder_for">SCHunt folder for %1$s</string>
     <string name="no_folder_selected">No folder selected</string>
     <string name="select_folder">Select Folder</string>
+    <string name="add_schunt_target">Add SCHunt target</string>
+    <string name="select_app_to_add">Select app to add</string>
+    <string name="remove_schunt_target">Remove target</string>
+    <string name="no_schunt_targets">No SCHunt targets configured.</string>
+    <string name="configure_schunt">Configure SCHunt folder</string>
+    <string name="cancel">Cancel</string>
 
     <!-- About section -->
     <string name="about_app_name">App Name</string>

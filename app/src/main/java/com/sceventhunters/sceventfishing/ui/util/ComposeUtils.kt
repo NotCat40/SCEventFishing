@@ -4,15 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.sceventhunters.sceventfishing.data.repository.PREFS_NAME
 
 @Composable
@@ -33,15 +29,32 @@ fun Context.findActivity(): Activity? = when (this) {
 @Composable
 fun <T> rememberPreference(context: Context, key: String, loader: (Context) -> T): T {
     var value by remember(context, key) { mutableStateOf(loader(context)) }
-    DisposableEffect(context, key) {
+    val currentLoader by rememberUpdatedState(loader)
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(context, key, lifecycleOwner) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
-            if (changedKey == key) {
-                value = loader(context)
+
+        val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == key || changedKey == null) {
+                value = currentLoader(context)
             }
         }
-        prefs.registerOnSharedPreferenceChangeListener(listener)
-        onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+
+        val lifecycleObserver = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                value = currentLoader(context)
+            }
+        }
+
+        prefs.registerOnSharedPreferenceChangeListener(prefListener)
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+
+        onDispose {
+            prefs.unregisterOnSharedPreferenceChangeListener(prefListener)
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+        }
     }
+
     return value
 }

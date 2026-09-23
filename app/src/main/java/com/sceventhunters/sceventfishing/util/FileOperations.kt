@@ -117,9 +117,10 @@ fun getEventFiles(
             res.filter { it.startsWith(path) }.distinctBy { it.substringAfterLast("/") }.sorted()
         }
         AppMode.COMPATIBILITY -> {
-            if (compatFolderUri == null) return emptyList()
+            val folderUri = compatFolderUri ?: com.sceventhunters.sceventfishing.data.repository.loadCompatFolderUri(context, packageName)
+            if (folderUri == null) return emptyList()
             try {
-                val treeUri = Uri.parse(compatFolderUri)
+                val treeUri = Uri.parse(folderUri)
                 val documentFile = DocumentFile.fromTreeUri(context, treeUri)
                 documentFile?.listFiles()?.filter { file ->
                     file.isFile && extensions.any { ext -> file.name?.endsWith(ext) == true }

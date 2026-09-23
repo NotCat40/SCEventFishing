@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,7 +34,7 @@ fun SettingsScreen(
     themeMode: ThemeMode,
     scrollToAbout: Boolean = false,
     onBack: () -> Unit,
-    onSelectCompatFolder: () -> Unit,
+    onSelectCompatFolder: (String) -> Unit,
     onSelectExportFolder: () -> Unit
 ) {
     val context = LocalContext.current
@@ -53,7 +55,6 @@ fun SettingsScreen(
     var langExpanded by remember { mutableStateOf(false) }
     val copyWithoutLink = rememberPreference(context, KEY_COPY_WITHOUT_LINK) { loadCopyWithoutLink(it) }
     val appMode = rememberPreference(context, KEY_APP_MODE) { loadAppMode(it) }
-    val compatFolderUri = rememberPreference(context, KEY_COMPAT_FOLDER_URI) { loadCompatFolderUri(it) }
     val exportFolderUri = rememberPreference(context, KEY_EXPORT_FOLDER_URI) { loadExportFolderUri(it) }
     var expanded by remember { mutableStateOf(false) }
 
@@ -281,21 +282,123 @@ fun SettingsScreen(
 
                     if (appMode == AppMode.COMPATIBILITY) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        Column {
-                            Text(text = stringResource(R.string.schunt_folder), style = MaterialTheme.typography.bodyLarge)
+                        Text(text = stringResource(R.string.schunt_folders), style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        val schuntPackages = rememberPreference(context, KEY_SCHUNT_PACKAGES) { loadSchuntPackages(it) }
+                        var showAddDialog by remember { mutableStateOf(false) }
+
+                        val monitoredPackages = listOf(
+                            "com.supercell.brawlstars",
+                            "bsd.suitcase.release",
+                            "com.magics.brawl",
+                            "com.tencent.tmgp.supercell.brawlstars",
+                            "com.supercell.clashroyale",
+                            "com.tencent.tmgp.supercell.clashroyale"
+                        )
+
+                        if (schuntPackages.isEmpty()) {
                             Text(
-                                text = compatFolderUri?.let { friendlyFolderPath(it) } ?: stringResource(R.string.no_folder_selected),
+                                text = stringResource(R.string.no_schunt_targets),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1
+                                modifier = Modifier.padding(vertical = 8.dp)
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Button(
-                                onClick = onSelectCompatFolder,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(stringResource(R.string.select_folder))
+                        } else {
+                            schuntPackages.forEach { pkg ->
+                                val folderUri = rememberPreference(context, getCompatFolderPreferenceKey(pkg)) { loadCompatFolderUri(it, pkg) }
+                                val appLabel = remember(pkg) {
+                                    try {
+                                        val info = context.packageManager.getApplicationInfo(pkg, 0)
+                                        context.packageManager.getApplicationLabel(info).toString()
+                                    } catch (e: Exception) {
+                                        pkg
+                                    }
+                                }
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = "$appLabel ($pkg)",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                        Text(
+                                            text = folderUri?.let { friendlyFolderPath(it) } ?: stringResource(R.string.no_folder_selected),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 1
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    TextButton(onClick = { onSelectCompatFolder(pkg) }) {
+                                        Text(stringResource(R.string.select_folder))
+                                    }
+                                    IconButton(onClick = {
+                                        removeSchuntPackage(context, pkg)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = stringResource(R.string.remove_schunt_target),
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 2.dp))
                             }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = { showAddDialog = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.add_schunt_target))
+                        }
+
+                        if (showAddDialog) {
+                            val availableToAdd = monitoredPackages.filterNot { schuntPackages.contains(it) }
+                            AlertDialog(
+                                onDismissRequest = { showAddDialog = false },
+                                title = { Text(stringResource(R.string.select_app_to_add)) },
+                                text = {
+                                    Column {
+                                        if (availableToAdd.isEmpty()) {
+                                            Text(stringResource(R.string.no_monitored_apps))
+                                        } else {
+                                            availableToAdd.forEach { pkg ->
+                                                val label = try {
+                                                    val info = context.packageManager.getApplicationInfo(pkg, 0)
+                                                    context.packageManager.getApplicationLabel(info).toString()
+                                                } catch (e: Exception) {
+                                                    pkg
+                                                }
+                                                ListItem(
+                                                    headlineContent = { Text(label) },
+                                                    supportingContent = { Text(pkg) },
+                                                    modifier = Modifier.clickable {
+                                                        showAddDialog = false
+                                                        onSelectCompatFolder(pkg)
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                },
+                                confirmButton = {},
+                                dismissButton = {
+                                    TextButton(onClick = { showAddDialog = false }) {
+                                        Text(stringResource(R.string.cancel))
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -324,7 +427,7 @@ fun SettingsScreen(
     }
 }
 
-private fun friendlyFolderPath(uriString: String): String {
+fun friendlyFolderPath(uriString: String): String {
     return try {
         val docId = DocumentsContract.getTreeDocumentId(Uri.parse(uriString))
         val path = docId.substringAfter(':', missingDelimiterValue = docId)

@@ -47,9 +47,20 @@
     <string name="mode_regular_desc">Требуются Root-права</string>
     <string name="mode_compat_desc">Без Root (SCHunt)</string>
     <string name="mode_demo_desc">Демо.</string>
+    <!-- mode_regular_badge Root  -->
+    <!-- mode_compat_badge SCHunt  -->
+    <string name="mode_demo_badge">Демо</string>
     <string name="schunt_folder">Папка вывода SCHunt</string>
+    <string name="schunt_folders">Папки вывода SCHunt</string>
+    <string name="schunt_folder_for">Папка SCHunt для %1$s</string>
     <string name="no_folder_selected">Папка не выбрана</string>
     <string name="select_folder">Выбрать папку</string>
+    <string name="add_schunt_target">Добавить таргет SCHunt</string>
+    <string name="select_app_to_add">Выберите приложение</string>
+    <string name="remove_schunt_target">Удалить таргет</string>
+    <string name="no_schunt_targets">Нет настроенных таргетов SCHunt.</string>
+    <string name="configure_schunt">Настроить папку SCHunt</string>
+    <string name="cancel">Отмена</string>
 
     <!-- About section -->
     <string name="about_app_name">Название приложения</string>

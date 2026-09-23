@@ -16,13 +16,21 @@ import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
 
 class SettingsActivity : AppCompatActivity() {
+    private var pendingCompatPackageName: String? = null
+
     private val openCompatFolderLauncher = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         uri?.let {
             contentResolver.takePersistableUriPermission(
                 it,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             )
-            saveCompatFolderUri(this, it.toString())
+            val pkg = pendingCompatPackageName
+            if (pkg != null) {
+                saveCompatFolderUri(this, pkg, it.toString())
+                com.sceventhunters.sceventfishing.data.repository.addSchuntPackage(this, pkg)
+            } else {
+                saveCompatFolderUri(this, it.toString())
+            }
         }
     }
 
@@ -49,7 +57,10 @@ class SettingsActivity : AppCompatActivity() {
                     themeMode = themeMode,
                     scrollToAbout = scrollToAbout,
                     onBack = { finish() },
-                    onSelectCompatFolder = { openCompatFolderLauncher.launch(null) },
+                    onSelectCompatFolder = { packageName ->
+                        pendingCompatPackageName = packageName
+                        openCompatFolderLauncher.launch(null)
+                    },
                     onSelectExportFolder = { openExportFolderLauncher.launch(null) }
                 )
             }

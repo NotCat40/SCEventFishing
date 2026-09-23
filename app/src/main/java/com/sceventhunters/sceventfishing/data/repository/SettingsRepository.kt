@@ -11,7 +11,9 @@ const val KEY_THEME_MODE = "theme_mode"
 const val KEY_APP_MODE = "app_mode"
 const val KEY_COPY_WITHOUT_LINK = "copy_no_link"
 const val KEY_COMPAT_FOLDER_URI = "compat_folder_uri"
+const val KEY_COMPAT_FOLDER_URI_PREFIX = "compat_folder_uri_"
 const val KEY_EXPORT_FOLDER_URI = "export_folder_uri"
+const val KEY_SCHUNT_PACKAGES = "schunt_packages"
 const val KEY_PROCESSED_FILES = "processed"
 const val KEY_SELECTED_PACKAGE = "selected"
 const val KEY_LANGUAGE = "language"
@@ -66,8 +68,50 @@ fun loadAppMode(context: Context): AppMode {
     return try { AppMode.valueOf(name ?: AppMode.REGULAR.name) } catch (e: Exception) { AppMode.REGULAR }
 }
 
+fun loadSchuntPackages(context: Context): Set<String> {
+    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    if (!prefs.contains(KEY_SCHUNT_PACKAGES)) {
+        val defaultSet = setOf("com.supercell.brawlstars")
+        saveSchuntPackages(context, defaultSet)
+        return defaultSet
+    }
+    return prefs.getStringSet(KEY_SCHUNT_PACKAGES, emptySet()) ?: emptySet()
+}
+
+fun saveSchuntPackages(context: Context, packages: Set<String>) {
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+        .putStringSet(KEY_SCHUNT_PACKAGES, packages).apply()
+}
+
+fun addSchuntPackage(context: Context, packageName: String) {
+    val current = loadSchuntPackages(context).toMutableSet()
+    current.add(packageName)
+    saveSchuntPackages(context, current)
+}
+
+fun removeSchuntPackage(context: Context, packageName: String) {
+    val current = loadSchuntPackages(context).toMutableSet()
+    current.remove(packageName)
+    saveSchuntPackages(context, current)
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+        .remove(getCompatFolderPreferenceKey(packageName)).apply()
+}
+
+fun getCompatFolderPreferenceKey(packageName: String): String = "$KEY_COMPAT_FOLDER_URI_PREFIX$packageName"
+
+fun saveCompatFolderUri(context: Context, packageName: String, uri: String?) {
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(getCompatFolderPreferenceKey(packageName), uri).apply()
+}
+
 fun saveCompatFolderUri(context: Context, uri: String?) {
     context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_COMPAT_FOLDER_URI, uri).apply()
+}
+
+fun loadCompatFolderUri(context: Context, packageName: String): String? {
+    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    val specific = prefs.getString(getCompatFolderPreferenceKey(packageName), null)
+    if (specific != null) return specific
+    return prefs.getString(KEY_COMPAT_FOLDER_URI, null)
 }
 
 fun loadCompatFolderUri(context: Context): String? {

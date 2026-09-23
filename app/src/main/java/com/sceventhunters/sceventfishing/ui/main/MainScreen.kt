@@ -39,6 +39,9 @@ import com.sceventhunters.sceventfishing.data.model.AppInfo
 import com.sceventhunters.sceventfishing.data.model.AppMode
 import com.sceventhunters.sceventfishing.data.repository.*
 import android.content.pm.ActivityInfo
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.sceventhunters.sceventfishing.ui.settings.friendlyFolderPath
 import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
 import com.sceventhunters.sceventfishing.ui.util.LockScreenOrientation
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
@@ -85,16 +88,58 @@ fun AppContent(modifier: Modifier = Modifier) {
         }
     }
 
+    val schuntPackages = rememberPreference(context, KEY_SCHUNT_PACKAGES) { loadSchuntPackages(it) }
+
     val brawlstarsAppList = remember(refreshTrigger) { brawlstarsPackages.map { getAppInfo(packageManager, it) } }
-    val installedBrawlstarsApps = brawlstarsAppList.filter { it.isInstalled }
-    val notInstalledBrawlstarsApps = brawlstarsAppList.filterNot { it.isInstalled }
+    val installedBrawlstarsApps = remember(brawlstarsAppList, appMode, schuntPackages) {
+        val installed = brawlstarsAppList.filter { it.isInstalled }
+        if (appMode == AppMode.COMPATIBILITY) {
+            installed.filter { schuntPackages.contains(it.packageName) }
+        } else {
+            installed
+        }
+    }
+    val notInstalledBrawlstarsApps = remember(brawlstarsAppList, appMode, schuntPackages) {
+        val notInstalled = brawlstarsAppList.filterNot { it.isInstalled }
+        if (appMode == AppMode.COMPATIBILITY) {
+            notInstalled.filter { schuntPackages.contains(it.packageName) }
+        } else {
+            notInstalled
+        }
+    }
 
     val clashRoyaleAppList = remember(refreshTrigger) { clashRoyalePackages.map { getAppInfo(packageManager, it) } }
-    val installedClashRoyaleApps = clashRoyaleAppList.filter { it.isInstalled }
-    val notInstalledClashRoyaleApps = clashRoyaleAppList.filterNot { it.isInstalled }
+    val installedClashRoyaleApps = remember(clashRoyaleAppList, appMode, schuntPackages) {
+        val installed = clashRoyaleAppList.filter { it.isInstalled }
+        if (appMode == AppMode.COMPATIBILITY) {
+            installed.filter { schuntPackages.contains(it.packageName) }
+        } else {
+            installed
+        }
+    }
+    val notInstalledClashRoyaleApps = remember(clashRoyaleAppList, appMode, schuntPackages) {
+        val notInstalled = clashRoyaleAppList.filterNot { it.isInstalled }
+        if (appMode == AppMode.COMPATIBILITY) {
+            notInstalled.filter { schuntPackages.contains(it.packageName) }
+        } else {
+            notInstalled
+        }
+    }
 
     val installedApps = installedBrawlstarsApps + installedClashRoyaleApps
     val notInstalledApps = notInstalledBrawlstarsApps + notInstalledClashRoyaleApps
+
+    LaunchedEffect(installedApps) {
+        if (installedApps.isNotEmpty()) {
+            if (selectedPackageName == null || installedApps.none { it.packageName == selectedPackageName }) {
+                updateSelectedPackage(installedApps.first().packageName)
+            }
+        } else {
+            if (selectedPackageName != null) {
+                updateSelectedPackage(null)
+            }
+        }
+    }
 
     val rootAvailable = remember { isRootAvailable() }
     val configuration = LocalConfiguration.current
@@ -208,7 +253,29 @@ fun AppContent(modifier: Modifier = Modifier) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.app_name)) },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.app_name))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            val modeLabel = when (appMode) {
+                                AppMode.REGULAR -> stringResource(R.string.mode_regular_badge)
+                                AppMode.COMPATIBILITY -> stringResource(R.string.mode_compat_badge)
+                                AppMode.DEMO -> stringResource(R.string.mode_demo_badge)
+                            }
+                            Surface(
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                modifier = Modifier.padding(vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = modeLabel,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.menu_description))
@@ -274,6 +341,30 @@ fun AppContent(modifier: Modifier = Modifier) {
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
                             }
+                            if (appMode == AppMode.COMPATIBILITY && installedBrawlstarsApps.isEmpty() && installedClashRoyaleApps.isEmpty()) {
+                                item {
+                                    ElevatedCard(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.padding(16.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.no_schunt_targets),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                textAlign = TextAlign.Center
+                                            )
+                                            Spacer(modifier = Modifier.height(12.dp))
+                                            Button(onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
+                                                Text(stringResource(R.string.add_schunt_target))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             if (installedBrawlstarsApps.isNotEmpty()) {
                                 item {
                                     Column(Modifier.padding(horizontal = 16.dp)) {
@@ -319,11 +410,14 @@ fun AppContent(modifier: Modifier = Modifier) {
                         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                         val selectedApp = installedApps.find { it.packageName == selectedPackageName }
+                        val selectedCompatUri = selectedApp?.let { app ->
+                            rememberPreference(context, getCompatFolderPreferenceKey(app.packageName)) { loadCompatFolderUri(it, app.packageName) }
+                        }
                         Scaffold(
                             modifier = Modifier.weight(2f),
                             floatingActionButton = {
                                 if (selectedApp != null) {
-                                    val eventFiles = getEventFiles(context, appMode, selectedApp.packageName, compatFolderUri)
+                                    val eventFiles = getEventFiles(context, appMode, selectedApp.packageName, selectedCompatUri)
                                     Row {
                                         ExtendedFloatingActionButton(
                                             onClick = {
@@ -396,6 +490,31 @@ fun AppContent(modifier: Modifier = Modifier) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 FilledTonalButton(onClick = { refreshTrigger++ }) {
                                     Text(stringResource(R.string.refresh_all))
+                                }
+                            }
+                        }
+
+                        if (appMode == AppMode.COMPATIBILITY && installedBrawlstarsApps.isEmpty() && installedClashRoyaleApps.isEmpty()) {
+                            item {
+                                ElevatedCard(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.no_schunt_targets),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(modifier = Modifier.height(12.dp))
+                                        Button(onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
+                                            Text(stringResource(R.string.add_schunt_target))
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -518,7 +637,7 @@ fun AppDetail(
     appInfo: AppInfo,
     isTablet: Boolean,
     appMode: AppMode,
-    compatFolderUri: String?,
+    compatFolderUri: String? = null,
     modifier: Modifier = Modifier,
     exportFolderUri: String? = null,
     refreshTrigger: Int = 0,
@@ -529,8 +648,13 @@ fun AppDetail(
 ) {
     val context = LocalContext.current
     val packageManager = context.packageManager
-    val eventFiles = remember(appInfo.packageName, refreshTrigger, appMode, compatFolderUri) {
-        getEventFiles(context, appMode, appInfo.packageName, compatFolderUri)
+
+    val effectiveCompatFolderUri = rememberPreference(context, getCompatFolderPreferenceKey(appInfo.packageName)) {
+        loadCompatFolderUri(it, appInfo.packageName)
+    } ?: compatFolderUri
+
+    val eventFiles = remember(appInfo.packageName, refreshTrigger, appMode, effectiveCompatFolderUri) {
+        getEventFiles(context, appMode, appInfo.packageName, effectiveCompatFolderUri)
     }
 
     val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -623,7 +747,7 @@ fun AppDetail(
                                     onRefresh()
                                 }
                             },
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = itemColor
                         )
                     }
                 }
