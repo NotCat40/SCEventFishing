@@ -58,7 +58,7 @@ fun AppContent(modifier: Modifier = Modifier) {
     val brawlstarsPackages = listOf(
         "bsd.suitcase.release",
         "com.supercell.brawlstars",
-        "com.magics.brawl",
+        // "com.magics.brawl",
         "com.tencent.tmgp.supercell.brawlstars"
     )
     val clashRoyalePackages = listOf(
