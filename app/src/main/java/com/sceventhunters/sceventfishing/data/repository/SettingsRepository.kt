@@ -17,6 +17,7 @@ const val KEY_SCHUNT_PACKAGES = "schunt_packages"
 const val KEY_PROCESSED_FILES = "processed"
 const val KEY_SELECTED_PACKAGE = "selected"
 const val KEY_LANGUAGE = "language"
+const val KEY_FILTER_UI_FILES = "filter_ui_files"
 
 fun saveLanguage(context: Context, languageCode: String) {
     context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_LANGUAGE, languageCode).apply()
@@ -133,4 +134,12 @@ fun loadThemeMode(context: Context): ThemeMode {
 
 fun saveThemeMode(context: Context, mode: ThemeMode) {
     context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_THEME_MODE, mode.name).apply()
+}
+
+fun saveFilterUiFiles(context: Context, value: Boolean) {
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putBoolean(KEY_FILTER_UI_FILES, value).apply()
+}
+
+fun loadFilterUiFiles(context: Context): Boolean {
+    return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getBoolean(KEY_FILTER_UI_FILES, true)
 }

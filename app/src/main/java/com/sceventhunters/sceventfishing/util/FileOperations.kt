@@ -128,11 +128,12 @@ fun getEventFiles(
     mode: AppMode,
     packageName: String,
     compatFolderUri: String? = null,
-    extensions: List<String> = listOf(".sc", ".jpg", ".png")
+    extensions: List<String> = listOf(".sc", ".jpg", ".png", ".ui")
 ): List<String> {
-    val cacheKey = "$mode-$packageName-$compatFolderUri"
+    val filterUiFiles = com.sceventhunters.sceventfishing.data.repository.loadFilterUiFiles(context)
+    val cacheKey = "$mode-$packageName-$compatFolderUri-$filterUiFiles"
     return eventFilesCache.getOrPut(cacheKey) {
-        when (mode) {
+        val rawFiles = when (mode) {
             AppMode.REGULAR -> {
                 val path = "/data/data/$packageName/cache/events/"
                 val res = RootShell.runCommand("[ -d \"$path\" ] && find $path -type f \\( ${extensions.joinToString(" -o ") { "-name '*$it'" }} \\) 2>/dev/null")
@@ -145,7 +146,7 @@ fun getEventFiles(
                     val treeUri = Uri.parse(folderUri)
                     val documentFile = DocumentFile.fromTreeUri(context, treeUri)
                     documentFile?.listFiles()?.filter { file ->
-                        file.isFile && extensions.any { ext -> file.name?.endsWith(ext) == true }
+                        file.isFile && extensions.any { ext -> file.name?.endsWith(ext, ignoreCase = true) == true }
                     }?.map { it.uri.toString() } ?: emptyList()
                 } catch (e: Exception) {
                     emptyList()
@@ -159,6 +160,14 @@ fun getEventFiles(
                     "/demo/events/icon.png"
                 )
             }
+        }
+        if (filterUiFiles) {
+            rawFiles.filter { filePath ->
+                val name = getFileName(context, filePath)
+                !name.endsWith(".ui", ignoreCase = true)
+            }
+        } else {
+            rawFiles
         }
     }
 }

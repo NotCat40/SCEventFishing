@@ -27,6 +27,7 @@ import com.sceventhunters.sceventfishing.data.model.AppMode
 import com.sceventhunters.sceventfishing.data.repository.*
 import com.sceventhunters.sceventfishing.ui.theme.ThemeMode
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
+import com.sceventhunters.sceventfishing.util.clearEventFilesCache
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +55,7 @@ fun SettingsScreen(
     var themeExpanded by remember { mutableStateOf(false) }
     var langExpanded by remember { mutableStateOf(false) }
     val copyWithoutLink = rememberPreference(context, KEY_COPY_WITHOUT_LINK) { loadCopyWithoutLink(it) }
+    val filterUiFiles = rememberPreference(context, KEY_FILTER_UI_FILES) { loadFilterUiFiles(it) }
     val appMode = rememberPreference(context, KEY_APP_MODE) { loadAppMode(it) }
     val exportFolderUri = rememberPreference(context, KEY_EXPORT_FOLDER_URI) { loadExportFolderUri(it) }
     var expanded by remember { mutableStateOf(false) }
@@ -103,6 +105,29 @@ fun SettingsScreen(
                         Switch(
                             checked = copyWithoutLink,
                             onCheckedChange = { saveCopyWithoutLink(context, it) }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = stringResource(R.string.filter_ui_files), style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                text = stringResource(R.string.filter_ui_files_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = filterUiFiles,
+                            onCheckedChange = { 
+                                saveFilterUiFiles(context, it)
+                                clearEventFilesCache()
+                            }
                         )
                     }
 

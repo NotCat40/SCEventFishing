@@ -38,6 +38,8 @@
     <string name="general_settings">General Settings</string>
     <string name="copy_without_link">Copy without link</string>
     <string name="copy_without_link_desc">Only copy file names without prefix</string>
+    <string name="filter_ui_files">Filter out .ui files</string>
+    <string name="filter_ui_files_desc">Exclude .ui files from event files list</string>
     <string name="export_folder">Export folder</string>
     <string name="export_folder_desc">Select where to save extracted files</string>
 

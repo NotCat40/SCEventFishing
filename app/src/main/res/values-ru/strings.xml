@@ -38,6 +38,8 @@
     <string name="general_settings">Общие настройки</string>
     <string name="copy_without_link">Копировать без ссылки</string>
     <string name="copy_without_link_desc">Копировать только имена файлов без префикса</string>
+    <string name="filter_ui_files">Отсеивать .ui файлы</string>
+    <string name="filter_ui_files_desc">Исключать .ui файлы из списка файлов событий</string>
     <string name="export_folder">Папка для экспорта</string>
     <string name="export_folder_desc">Выберите, куда сохранять извлеченные файлы</string>
 
