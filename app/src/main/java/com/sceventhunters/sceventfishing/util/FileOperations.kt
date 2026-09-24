@@ -5,6 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import com.sceventhunters.sceventfishing.R
@@ -47,7 +49,9 @@ fun copyUrlsToClipboard(
         if (copyWithoutLink) fileName else baseUrl + fileName
     }
     clipboardManager.setPrimaryClip(ClipData.newPlainText("Event Files", allText))
-    Toast.makeText(context, context.getString(R.string.copied_items_toast, eventFiles.size), Toast.LENGTH_SHORT).show()
+    Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, context.getString(R.string.copied_items_toast, eventFiles.size), Toast.LENGTH_SHORT).show()
+    }
 }
 
 fun extractFilesToDownloadEvents(
@@ -68,7 +72,9 @@ fun extractFilesToDownloadEvents(
     }
 
     if (destDir == null || !destDir.exists()) {
-        Toast.makeText(context, "Destination folder not available", Toast.LENGTH_SHORT).show()
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(context, "Destination folder not available", Toast.LENGTH_SHORT).show()
+        }
         return
     }
 
@@ -104,8 +110,11 @@ fun extractFilesToDownloadEvents(
             // Log error
         }
     }
-    Toast.makeText(context, context.getString(R.string.extracted_files_toast, successCount), Toast.LENGTH_SHORT).show()
-    onComplete()
+    Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, context.getString(R.string.extracted_files_toast, successCount), Toast.LENGTH_SHORT).show()
+        clearEventFilesCache()
+        onComplete()
+    }
 }
 
 private val eventFilesCache = mutableMapOf<String, List<String>>()

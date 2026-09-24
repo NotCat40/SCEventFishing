@@ -459,9 +459,11 @@ fun AppContent(modifier: Modifier = Modifier) {
                                         Spacer(modifier = Modifier.width(8.dp))
                                         FloatingActionButton(
                                             onClick = {
-                                                extractFilesToDownloadEvents(context, selectedApp.packageName, eventFiles, exportFolderUri) {
-                                                    updateProcessedFiles(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
-                                                    refreshTrigger++
+                                                scope.launch(Dispatchers.IO) {
+                                                    extractFilesToDownloadEvents(context, selectedApp.packageName, eventFiles, exportFolderUri) {
+                                                        updateProcessedFiles(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
+                                                        refreshTrigger++
+                                                    }
                                                 }
                                             }
                                         ) {
@@ -676,6 +678,7 @@ fun AppDetail(
     onRefresh: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val packageManager = context.packageManager
 
     val effectiveCompatFolderUri = rememberPreference(context, getCompatFolderPreferenceKey(appInfo.packageName)) {
@@ -695,7 +698,11 @@ fun AppDetail(
     var extractedFileNames by remember { mutableStateOf<Set<String>>(emptySet()) }
     LaunchedEffect(appInfo.packageName, refreshTrigger) {
         extractedFileNames = withContext(Dispatchers.IO) {
-            RootShell.runCommand("ls \"${eventsDir.absolutePath}\" 2>/dev/null").toSet()
+            if (eventsDir.exists() && eventsDir.isDirectory) {
+                eventsDir.list()?.toSet() ?: emptySet()
+            } else {
+                emptySet()
+            }
         }
     }
 
@@ -751,9 +758,11 @@ fun AppDetail(
                 }
                 FilledTonalButton(
                     onClick = {
-                        extractFilesToDownloadEvents(context, appInfo.packageName, eventFiles, exportFolderUri) {
-                            onSessionFilesChanged(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
-                            onRefresh()
+                        scope.launch(Dispatchers.IO) {
+                            extractFilesToDownloadEvents(context, appInfo.packageName, eventFiles, exportFolderUri) {
+                                onSessionFilesChanged(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
+                                onRefresh()
+                            }
                         }
                     },
                     modifier = Modifier.weight(1f)
@@ -799,9 +808,11 @@ fun AppDetail(
                             imageVector = Icons.Default.FileDownload,
                             contentDescription = stringResource(R.string.extract),
                             modifier = Modifier.size(20.dp).clickable {
-                                extractFilesToDownloadEvents(context, appInfo.packageName, listOf(filePath), exportFolderUri) {
-                                    onSessionFilesChanged(sessionProcessedFiles + fileName)
-                                    onRefresh()
+                                scope.launch(Dispatchers.IO) {
+                                    extractFilesToDownloadEvents(context, appInfo.packageName, listOf(filePath), exportFolderUri) {
+                                        onSessionFilesChanged(sessionProcessedFiles + fileName)
+                                        onRefresh()
+                                    }
                                 }
                             },
                             tint = itemColor
