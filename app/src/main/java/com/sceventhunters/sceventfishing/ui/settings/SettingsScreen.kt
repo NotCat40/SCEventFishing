@@ -308,7 +308,21 @@ fun SettingsScreen(
 
                     if (appMode == AppMode.COMPATIBILITY) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = stringResource(R.string.schunt_folders), style = MaterialTheme.typography.titleMedium)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = stringResource(R.string.schunt_folders), style = MaterialTheme.typography.titleMedium)
+                            OutlinedButton(
+                                onClick = {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/FMZNkdv/SCHunt"))
+                                    context.startActivity(intent)
+                                }
+                            ) {
+                                Text(stringResource(R.string.schunt_library))
+                            }
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
 
                         val schuntPackages = rememberPreference(context, KEY_SCHUNT_PACKAGES) { loadSchuntPackages(it) }
