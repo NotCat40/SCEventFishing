@@ -27,11 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.sceventhunters.sceventfishing.R
 import com.sceventhunters.sceventfishing.SettingsActivity
@@ -71,6 +74,18 @@ fun AppContent(modifier: Modifier = Modifier) {
     var refreshTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(refreshTrigger) {
         clearEventFilesCache()
+    }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshTrigger++
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
     var sessionProcessedFiles by remember { mutableStateOf(loadProcessedFiles(context)) }
     var selectedPackageName by remember { mutableStateOf(loadSelectedPackage(context)) }
