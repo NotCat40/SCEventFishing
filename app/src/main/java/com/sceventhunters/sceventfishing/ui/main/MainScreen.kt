@@ -46,7 +46,9 @@ import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
 import com.sceventhunters.sceventfishing.ui.util.LockScreenOrientation
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
 import com.sceventhunters.sceventfishing.util.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +69,9 @@ fun AppContent(modifier: Modifier = Modifier) {
     )
 
     var refreshTrigger by remember { mutableStateOf(0) }
+    LaunchedEffect(refreshTrigger) {
+        clearEventFilesCache()
+    }
     var sessionProcessedFiles by remember { mutableStateOf(loadProcessedFiles(context)) }
     var selectedPackageName by remember { mutableStateOf(loadSelectedPackage(context)) }
     val copyWithoutLink = rememberPreference(context, KEY_COPY_WITHOUT_LINK) { loadCopyWithoutLink(it) }
@@ -653,48 +658,43 @@ fun AppDetail(
         loadCompatFolderUri(it, appInfo.packageName)
     } ?: compatFolderUri
 
-    val eventFiles = remember(appInfo.packageName, refreshTrigger, appMode, effectiveCompatFolderUri) {
-        getEventFiles(context, appMode, appInfo.packageName, effectiveCompatFolderUri)
+    var eventFiles by remember { mutableStateOf<List<String>>(emptyList()) }
+    LaunchedEffect(appInfo.packageName, refreshTrigger, appMode, effectiveCompatFolderUri) {
+        eventFiles = withContext(Dispatchers.IO) {
+            getEventFiles(context, appMode, appInfo.packageName, effectiveCompatFolderUri)
+        }
     }
 
     val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     val eventsDir = File(downloadDir, "events")
 
-    val extractedFileNames = remember(appInfo.packageName, refreshTrigger) {
-        RootShell.runCommand("ls \"${eventsDir.absolutePath}\" 2>/dev/null").toSet()
+    var extractedFileNames by remember { mutableStateOf<Set<String>>(emptySet()) }
+    LaunchedEffect(appInfo.packageName, refreshTrigger) {
+        extractedFileNames = withContext(Dispatchers.IO) {
+            RootShell.runCommand("ls \"${eventsDir.absolutePath}\" 2>/dev/null").toSet()
+        }
     }
 
     Column(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             appInfo.icon?.let {
                 Image(
                     painter = rememberDrawablePainter(drawable = it),
                     contentDescription = null,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(44.dp)
                 )
+                Spacer(modifier = Modifier.width(12.dp))
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(text = appInfo.appName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-
-            if (!isTablet && eventFiles.isNotEmpty()) {
-                                Button(onClick = {
-                                    copyUrlsToClipboard(context, appInfo.packageName, eventFiles, copyWithoutLink)
-                                    onSessionFilesChanged(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
-                                }) {
-                                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-                                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                    Text(stringResource(R.string.copy_all))
-                                }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                FilledTonalIconButton(onClick = {
-                                    extractFilesToDownloadEvents(context, appInfo.packageName, eventFiles, exportFolderUri) {
-                                        onSessionFilesChanged(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
-                                        onRefresh()
-                                    }
-                                }) {
-                                    Icon(Icons.Default.Download, contentDescription = stringResource(R.string.extract_all))
-                                }
-                            }
+            Text(
+                text = appInfo.appName,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
 
             if (appInfo.isInstalled) {
                 Spacer(modifier = Modifier.width(8.dp))
@@ -703,7 +703,40 @@ fun AppDetail(
                     if (launchIntent != null) context.startActivity(launchIntent)
                     else Toast.makeText(context, context.getString(R.string.could_not_launch), Toast.LENGTH_SHORT).show()
                 }) {
-                    Text(stringResource(R.string.launch))
+                    Text(stringResource(R.string.launch), maxLines = 1)
+                }
+            }
+        }
+
+        if (!isTablet && eventFiles.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        copyUrlsToClipboard(context, appInfo.packageName, eventFiles, copyWithoutLink)
+                        onSessionFilesChanged(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.copy_all), maxLines = 1)
+                }
+                FilledTonalButton(
+                    onClick = {
+                        extractFilesToDownloadEvents(context, appInfo.packageName, eventFiles, exportFolderUri) {
+                            onSessionFilesChanged(sessionProcessedFiles + eventFiles.map { File(it).name }.toSet())
+                            onRefresh()
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.extract_all), maxLines = 1)
                 }
             }
         }

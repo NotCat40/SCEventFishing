@@ -3,6 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+
+    <queries>
+        <package android:name="com.supercell.brawlstars" />
+        <package android:name="bsd.suitcase.release" />
+        <!-- <package android:name="com.magics.brawl" /> -->
+        <package android:name="com.tencent.tmgp.supercell.brawlstars" />
+        <package android:name="com.supercell.clashroyale" />
+        <package android:name="com.tencent.tmgp.supercell.clashroyale" />
+    </queries>
 
     <application
         android:allowBackup="true"

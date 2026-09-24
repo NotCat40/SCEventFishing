@@ -20,6 +20,19 @@ fun getBaseUrlForPackage(packageName: String): String {
     }
 }
 
+fun getFileName(context: Context, filePath: String): String {
+    return if (filePath.startsWith("content://")) {
+        try {
+            val uri = Uri.parse(filePath)
+            uri.lastPathSegment?.substringAfterLast('/') ?: "unknown"
+        } catch (e: Exception) {
+            "unknown"
+        }
+    } else {
+        File(filePath).name
+    }
+}
+
 fun copyUrlsToClipboard(
     context: Context,
     packageName: String,
@@ -30,11 +43,7 @@ fun copyUrlsToClipboard(
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val baseUrl = getBaseUrlForPackage(packageName)
     val allText = eventFiles.joinToString("\n") { filePath ->
-        val fileName = if (filePath.startsWith("content://")) {
-            DocumentFile.fromSingleUri(context, Uri.parse(filePath))?.name ?: "unknown"
-        } else {
-            File(filePath).name
-        }
+        val fileName = getFileName(context, filePath)
         if (copyWithoutLink) fileName else baseUrl + fileName
     }
     clipboardManager.setPrimaryClip(ClipData.newPlainText("Event Files", allText))
@@ -65,11 +74,7 @@ fun extractFilesToDownloadEvents(
 
     var successCount = 0
     eventFiles.forEach { filePath ->
-        val fileName = if (filePath.startsWith("content://")) {
-            DocumentFile.fromSingleUri(context, Uri.parse(filePath))?.name ?: "unknown"
-        } else {
-            File(filePath).name
-        }
+        val fileName = getFileName(context, filePath)
 
         val destFile = destDir.findFile(fileName) ?: destDir.createFile("*/*", fileName)
         if (destFile == null) return@forEach
@@ -103,6 +108,12 @@ fun extractFilesToDownloadEvents(
     onComplete()
 }
 
+private val eventFilesCache = mutableMapOf<String, List<String>>()
+
+fun clearEventFilesCache() {
+    eventFilesCache.clear()
+}
+
 fun getEventFiles(
     context: Context,
     mode: AppMode,
@@ -110,32 +121,35 @@ fun getEventFiles(
     compatFolderUri: String? = null,
     extensions: List<String> = listOf(".sc", ".jpg", ".png")
 ): List<String> {
-    return when (mode) {
-        AppMode.REGULAR -> {
-            val path = "/data/data/$packageName/cache/events/"
-            val res = RootShell.runCommand("[ -d \"$path\" ] && find $path -type f \\( ${extensions.joinToString(" -o ") { "-name '*$it'" }} \\) 2>/dev/null")
-            res.filter { it.startsWith(path) }.distinctBy { it.substringAfterLast("/") }.sorted()
-        }
-        AppMode.COMPATIBILITY -> {
-            val folderUri = compatFolderUri ?: com.sceventhunters.sceventfishing.data.repository.loadCompatFolderUri(context, packageName)
-            if (folderUri == null) return emptyList()
-            try {
-                val treeUri = Uri.parse(folderUri)
-                val documentFile = DocumentFile.fromTreeUri(context, treeUri)
-                documentFile?.listFiles()?.filter { file ->
-                    file.isFile && extensions.any { ext -> file.name?.endsWith(ext) == true }
-                }?.map { it.uri.toString() } ?: emptyList()
-            } catch (e: Exception) {
-                emptyList()
+    val cacheKey = "$mode-$packageName-$compatFolderUri"
+    return eventFilesCache.getOrPut(cacheKey) {
+        when (mode) {
+            AppMode.REGULAR -> {
+                val path = "/data/data/$packageName/cache/events/"
+                val res = RootShell.runCommand("[ -d \"$path\" ] && find $path -type f \\( ${extensions.joinToString(" -o ") { "-name '*$it'" }} \\) 2>/dev/null")
+                res.filter { it.startsWith(path) }.distinctBy { it.substringAfterLast("/") }.sorted()
             }
-        }
-        AppMode.DEMO -> {
-            listOf(
-                "/demo/events/event_1.sc",
-                "/demo/events/event_2.sc",
-                "/demo/events/background.jpg",
-                "/demo/events/icon.png"
-            )
+            AppMode.COMPATIBILITY -> {
+                val folderUri = compatFolderUri ?: com.sceventhunters.sceventfishing.data.repository.loadCompatFolderUri(context, packageName)
+                if (folderUri == null) return@getOrPut emptyList()
+                try {
+                    val treeUri = Uri.parse(folderUri)
+                    val documentFile = DocumentFile.fromTreeUri(context, treeUri)
+                    documentFile?.listFiles()?.filter { file ->
+                        file.isFile && extensions.any { ext -> file.name?.endsWith(ext) == true }
+                    }?.map { it.uri.toString() } ?: emptyList()
+                } catch (e: Exception) {
+                    emptyList()
+                }
+            }
+            AppMode.DEMO -> {
+                listOf(
+                    "/demo/events/event_1.sc",
+                    "/demo/events/event_2.sc",
+                    "/demo/events/background.jpg",
+                    "/demo/events/icon.png"
+                )
+            }
         }
     }
 }

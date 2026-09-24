@@ -291,7 +291,7 @@ fun SettingsScreen(
                         val monitoredPackages = listOf(
                             "com.supercell.brawlstars",
                             "bsd.suitcase.release",
-                            "com.magics.brawl",
+                            // "com.magics.brawl",
                             "com.tencent.tmgp.supercell.brawlstars",
                             "com.supercell.clashroyale",
                             "com.tencent.tmgp.supercell.clashroyale"
