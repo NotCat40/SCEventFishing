@@ -110,7 +110,15 @@ fun AppContent(modifier: Modifier = Modifier) {
 
     val schuntPackages = rememberPreference(context, KEY_SCHUNT_PACKAGES) { loadSchuntPackages(it) }
 
-    val brawlstarsAppList = remember(refreshTrigger) { brawlstarsPackages.map { getAppInfo(packageManager, it) } }
+    var brawlstarsAppList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
+    var clashRoyaleAppList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
+
+    LaunchedEffect(refreshTrigger) {
+        withContext(Dispatchers.IO) {
+            brawlstarsAppList = brawlstarsPackages.map { getAppInfo(packageManager, it) }
+            clashRoyaleAppList = clashRoyalePackages.map { getAppInfo(packageManager, it) }
+        }
+    }
     val installedBrawlstarsApps = remember(brawlstarsAppList, appMode, schuntPackages) {
         val installed = brawlstarsAppList.filter { it.isInstalled }
         if (appMode == AppMode.COMPATIBILITY) {
@@ -128,7 +136,6 @@ fun AppContent(modifier: Modifier = Modifier) {
         }
     }
 
-    val clashRoyaleAppList = remember(refreshTrigger) { clashRoyalePackages.map { getAppInfo(packageManager, it) } }
     val installedClashRoyaleApps = remember(clashRoyaleAppList, appMode, schuntPackages) {
         val installed = clashRoyaleAppList.filter { it.isInstalled }
         if (appMode == AppMode.COMPATIBILITY) {
@@ -161,7 +168,9 @@ fun AppContent(modifier: Modifier = Modifier) {
         }
     }
 
-    val rootAvailable = remember { isRootAvailable() }
+    val rootAvailable by produceState(initialValue = true) {
+        value = withContext(Dispatchers.IO) { isRootAvailable() }
+    }
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp.dp >= 600.dp
 

@@ -22,7 +22,14 @@ object RootShell {
             process?.waitFor()
         } catch (e: Exception) {} finally { process?.destroy(); process = null }
     }
-    fun isRootAvailable(): Boolean = start()
+    private var cachedRoot: Boolean? = null
+
+    fun isRootAvailable(): Boolean {
+        cachedRoot?.let { return it }
+        val available = start()
+        cachedRoot = available
+        return available
+    }
     fun runCommand(command: String): List<String> {
         if (!start()) return emptyList()
         return try {
