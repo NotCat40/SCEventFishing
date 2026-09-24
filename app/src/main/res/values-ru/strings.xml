@@ -71,7 +71,9 @@
     <string name="about_author">Автор</string>
     <string name="author_name">Команда SCEventHunters</string>
     <string name="about_description">Описание</string>
-    <string name="app_description">Инструмент для извлечения и управления ивентовыми ассетами из игр Supercell.</string>
+    <string name="app_description">Нативное Android приложение для ловли (сбора) и управления ивентовыми файлами Supercell</string>
+    <string name="github_repository">Репозиторий GitHub</string>
+    <string name="telegram_channel">Telegram канал</string>
 
     <!-- Visuals & Language selection -->
     <string name="theme_system">Системная тема</string>

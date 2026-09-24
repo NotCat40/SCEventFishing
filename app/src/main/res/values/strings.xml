@@ -71,7 +71,9 @@
     <string name="about_author">Author</string>
     <string name="author_name">SCEventHunters team</string>
     <string name="about_description">Description</string>
-    <string name="app_description">Tool for extracting and managing event assets from Supercell games.</string>
+    <string name="app_description">Native open-source Android app for catching and managing Supercell event files.</string>
+    <string name="github_repository">GitHub Repository</string>
+    <string name="telegram_channel">Telegram Channel</string>
 
     <!-- Visuals & Language selection -->
     <string name="theme_system">System Default</string>

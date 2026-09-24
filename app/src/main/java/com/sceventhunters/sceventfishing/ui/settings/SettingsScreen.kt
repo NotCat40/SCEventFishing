@@ -3,6 +3,7 @@ package com.sceventhunters.sceventfishing.ui.settings
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.appcompat.app.AppCompatDelegate
@@ -456,6 +457,31 @@ fun SettingsScreen(
                     AboutItem(stringResource(R.string.about_author), stringResource(R.string.author_name))
                     AboutItem(stringResource(R.string.about_description), stringResource(R.string.app_description))
                     // AboutItem(stringResource(R.string.mewgenics), stringResource(R.string.mewgenics_long))
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/NotCat40/SCEventFishing"))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.github_repository))
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/sceventfishing"))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.telegram_channel))
+                        }
+                    }
                 }
             }
         }
