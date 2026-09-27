@@ -26,6 +26,7 @@ import androidx.core.os.LocaleListCompat
 import com.sceventhunters.sceventfishing.R
 import com.sceventhunters.sceventfishing.data.model.AppMode
 import com.sceventhunters.sceventfishing.data.repository.*
+import com.sceventhunters.sceventfishing.ui.theme.ColorSchemeMode
 import com.sceventhunters.sceventfishing.ui.theme.ThemeMode
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
 import com.sceventhunters.sceventfishing.util.clearEventFilesCache
@@ -54,10 +55,12 @@ fun SettingsScreen(
         mutableStateOf(saved ?: fallback ?: "en")
     }
     var themeExpanded by remember { mutableStateOf(false) }
+    var colorSchemeExpanded by remember { mutableStateOf(false) }
     var langExpanded by remember { mutableStateOf(false) }
     val copyWithoutLink = rememberPreference(context, KEY_COPY_WITHOUT_LINK) { loadCopyWithoutLink(it) }
     val filterUiFiles = rememberPreference(context, KEY_FILTER_UI_FILES) { loadFilterUiFiles(it) }
     val appMode = rememberPreference(context, KEY_APP_MODE) { loadAppMode(it) }
+    val colorSchemeMode = rememberPreference(context, KEY_COLOR_SCHEME) { loadColorScheme(it) }
     val exportFolderUri = rememberPreference(context, KEY_EXPORT_FOLDER_URI) { loadExportFolderUri(it) }
     var expanded by remember { mutableStateOf(false) }
 
@@ -201,6 +204,49 @@ fun SettingsScreen(
                                     onClick = {
                                         saveThemeMode(context, mode)
                                         themeExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ExposedDropdownMenuBox(
+                        expanded = colorSchemeExpanded,
+                        onExpandedChange = { colorSchemeExpanded = !colorSchemeExpanded },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        val colorSchemeText = when(colorSchemeMode) {
+                            ColorSchemeMode.GREEN_ROOT -> stringResource(R.string.color_scheme_green)
+                            ColorSchemeMode.PURPLE_SUNSET -> stringResource(R.string.color_scheme_purple_sunset)
+                            ColorSchemeMode.CRONA_API -> stringResource(R.string.color_scheme_crona)
+                        }
+                        OutlinedTextField(
+                            value = colorSchemeText,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text(stringResource(R.string.select_color_scheme)) },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = colorSchemeExpanded) },
+                            modifier = Modifier.menuAnchor().fillMaxWidth()
+                        )
+                        ExposedDropdownMenu(
+                            expanded = colorSchemeExpanded,
+                            onDismissRequest = { colorSchemeExpanded = false }
+                        ) {
+                            ColorSchemeMode.values().forEach { mode ->
+                                DropdownMenuItem(
+                                    text = {
+                                        val label = when(mode) {
+                                            ColorSchemeMode.GREEN_ROOT -> stringResource(R.string.color_scheme_green)
+                                            ColorSchemeMode.PURPLE_SUNSET -> stringResource(R.string.color_scheme_purple_sunset)
+                                            ColorSchemeMode.CRONA_API -> stringResource(R.string.color_scheme_crona)
+                                        }
+                                        Text(label)
+                                    },
+                                    onClick = {
+                                        saveColorScheme(context, mode)
+                                        colorSchemeExpanded = false
                                     }
                                 )
                             }

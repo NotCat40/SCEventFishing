@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.LocalContext
+import com.sceventhunters.sceventfishing.data.repository.KEY_COLOR_SCHEME
 import com.sceventhunters.sceventfishing.data.repository.KEY_THEME_MODE
 import com.sceventhunters.sceventfishing.data.repository.applyStoredLanguage
+import com.sceventhunters.sceventfishing.data.repository.loadColorScheme
 import com.sceventhunters.sceventfishing.data.repository.loadThemeMode
 import com.sceventhunters.sceventfishing.ui.main.AppContent
 import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
@@ -19,8 +21,9 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val context = LocalContext.current
             val themeMode = rememberPreference(context, KEY_THEME_MODE) { loadThemeMode(it) }
+            val colorSchemeMode = rememberPreference(context, KEY_COLOR_SCHEME) { loadColorScheme(it) }
 
-            SCEventFishingTheme(themeMode = themeMode) {
+            SCEventFishingTheme(themeMode = themeMode, colorSchemeMode = colorSchemeMode) {
                 AppContent()
             }
         }

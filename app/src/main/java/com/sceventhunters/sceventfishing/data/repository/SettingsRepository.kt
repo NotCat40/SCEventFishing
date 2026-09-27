@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.sceventhunters.sceventfishing.data.model.AppMode
+import com.sceventhunters.sceventfishing.ui.theme.ColorSchemeMode
 import com.sceventhunters.sceventfishing.ui.theme.ThemeMode
 
 const val PREFS_NAME = "prefs"
 const val KEY_THEME_MODE = "theme_mode"
+const val KEY_COLOR_SCHEME = "color_scheme"
 const val KEY_APP_MODE = "app_mode"
 const val KEY_COPY_WITHOUT_LINK = "copy_no_link"
 const val KEY_COMPAT_FOLDER_URI = "compat_folder_uri"
@@ -142,4 +144,13 @@ fun saveFilterUiFiles(context: Context, value: Boolean) {
 
 fun loadFilterUiFiles(context: Context): Boolean {
     return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getBoolean(KEY_FILTER_UI_FILES, true)
+}
+
+fun loadColorScheme(context: Context): ColorSchemeMode {
+    val name = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(KEY_COLOR_SCHEME, ColorSchemeMode.GREEN_ROOT.name)
+    return try { ColorSchemeMode.valueOf(name ?: ColorSchemeMode.GREEN_ROOT.name) } catch (e: Exception) { ColorSchemeMode.GREEN_ROOT }
+}
+
+fun saveColorScheme(context: Context, mode: ColorSchemeMode) {
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_COLOR_SCHEME, mode.name).apply()
 }
