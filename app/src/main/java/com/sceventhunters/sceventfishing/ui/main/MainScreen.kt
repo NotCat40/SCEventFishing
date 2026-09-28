@@ -44,6 +44,7 @@ import com.sceventhunters.sceventfishing.data.repository.*
 import android.content.pm.ActivityInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.content.ContextCompat
 import com.sceventhunters.sceventfishing.ui.settings.friendlyFolderPath
 import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
@@ -92,7 +93,9 @@ fun AppContent(modifier: Modifier = Modifier) {
     var sessionProcessedFiles by remember { mutableStateOf(loadProcessedFiles(context)) }
     var selectedPackageName by remember { mutableStateOf(loadSelectedPackage(context)) }
     val copyWithoutLink = rememberPreference(context, KEY_COPY_WITHOUT_LINK) { loadCopyWithoutLink(it) }
-    val appMode = rememberPreference(context, KEY_APP_MODE) { loadAppMode(it) }
+    val isInspectionMode = LocalInspectionMode.current
+    val rawAppMode = rememberPreference(context, KEY_APP_MODE) { loadAppMode(it) }
+    val appMode = if (isInspectionMode) AppMode.DEMO else rawAppMode
     val compatFolderUri = rememberPreference(context, KEY_COMPAT_FOLDER_URI) { loadCompatFolderUri(it) }
     val exportFolderUri = rememberPreference(context, KEY_EXPORT_FOLDER_URI) { loadExportFolderUri(it) }
 

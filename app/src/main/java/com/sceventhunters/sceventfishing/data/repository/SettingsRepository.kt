@@ -82,8 +82,9 @@ fun loadSchuntPackages(context: Context): Set<String> {
 }
 
 fun saveSchuntPackages(context: Context, packages: Set<String>) {
-    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
-        .putStringSet(KEY_SCHUNT_PACKAGES, packages).apply()
+    val editor = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+    editor.putStringSet(KEY_SCHUNT_PACKAGES, packages)
+    editor.apply()
 }
 
 fun addSchuntPackage(context: Context, packageName: String) {
