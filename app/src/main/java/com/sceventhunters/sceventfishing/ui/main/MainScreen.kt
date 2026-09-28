@@ -387,7 +387,7 @@ fun AppContent(modifier: Modifier = Modifier) {
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
                             }
-                            if (appMode == AppMode.COMPATIBILITY && installedBrawlstarsApps.isEmpty() && installedClashRoyaleApps.isEmpty()) {
+                            if (installedBrawlstarsApps.isEmpty() && installedClashRoyaleApps.isEmpty()) {
                                 item {
                                     ElevatedCard(
                                         modifier = Modifier
@@ -395,17 +395,33 @@ fun AppContent(modifier: Modifier = Modifier) {
                                             .padding(horizontal = 16.dp, vertical = 8.dp)
                                     ) {
                                         Column(
-                                            modifier = Modifier.padding(16.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally
+                                            modifier = Modifier.padding(16.dp)
                                         ) {
+                                            val message = if (appMode == AppMode.COMPATIBILITY) {
+                                                if (schuntPackages.isEmpty()) {
+                                                    stringResource(R.string.no_schunt_targets)
+                                                } else {
+                                                    stringResource(R.string.no_installed_schunt_targets)
+                                                }
+                                            } else {
+                                                stringResource(R.string.no_monitored_apps)
+                                            }
                                             Text(
-                                                text = stringResource(R.string.no_schunt_targets),
+                                                text = message,
                                                 style = MaterialTheme.typography.bodyMedium,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Start
                                             )
                                             Spacer(modifier = Modifier.height(12.dp))
-                                            Button(onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
-                                                Text(stringResource(R.string.add_schunt_target))
+                                            Button(
+                                                onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }
+                                            ) {
+                                                Text(
+                                                    if (appMode == AppMode.COMPATIBILITY && schuntPackages.isEmpty()) {
+                                                        stringResource(R.string.add_schunt_target)
+                                                    } else {
+                                                        stringResource(R.string.settings)
+                                                    }
+                                                )
                                             }
                                         }
                                     }
@@ -542,7 +558,7 @@ fun AppContent(modifier: Modifier = Modifier) {
                             }
                         }
 
-                        if (appMode == AppMode.COMPATIBILITY && installedBrawlstarsApps.isEmpty() && installedClashRoyaleApps.isEmpty()) {
+                        if (installedBrawlstarsApps.isEmpty() && installedClashRoyaleApps.isEmpty()) {
                             item {
                                 ElevatedCard(
                                     modifier = Modifier
@@ -550,17 +566,33 @@ fun AppContent(modifier: Modifier = Modifier) {
                                         .padding(16.dp)
                                 ) {
                                     Column(
-                                        modifier = Modifier.padding(16.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
+                                        modifier = Modifier.padding(16.dp)
                                     ) {
+                                        val message = if (appMode == AppMode.COMPATIBILITY) {
+                                            if (schuntPackages.isEmpty()) {
+                                                stringResource(R.string.no_schunt_targets)
+                                            } else {
+                                                stringResource(R.string.no_installed_schunt_targets)
+                                            }
+                                        } else {
+                                            stringResource(R.string.no_monitored_apps)
+                                        }
                                         Text(
-                                            text = stringResource(R.string.no_schunt_targets),
+                                            text = message,
                                             style = MaterialTheme.typography.bodyLarge,
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Start
                                         )
                                         Spacer(modifier = Modifier.height(12.dp))
-                                        Button(onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
-                                            Text(stringResource(R.string.add_schunt_target))
+                                        Button(
+                                            onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }
+                                        ) {
+                                            Text(
+                                                if (appMode == AppMode.COMPATIBILITY && schuntPackages.isEmpty()) {
+                                                    stringResource(R.string.add_schunt_target)
+                                                } else {
+                                                    stringResource(R.string.settings)
+                                                }
+                                            )
                                         }
                                     }
                                 }

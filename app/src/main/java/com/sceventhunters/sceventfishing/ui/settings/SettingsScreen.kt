@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,6 +32,7 @@ import com.sceventhunters.sceventfishing.ui.theme.ThemeMode
 import com.sceventhunters.sceventfishing.ui.theme.componentColors
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
 import com.sceventhunters.sceventfishing.util.clearEventFilesCache
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +73,7 @@ fun SettingsScreen(
                 title = { Text(stringResource(R.string.settings_about)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -193,7 +194,7 @@ fun SettingsScreen(
                             expanded = themeExpanded,
                             onDismissRequest = { themeExpanded = false }
                         ) {
-                            ThemeMode.values().forEach { mode ->
+                            ThemeMode.entries.forEach { mode ->
                                 DropdownMenuItem(
                                     text = {
                                         val label = when(mode) {
@@ -238,7 +239,7 @@ fun SettingsScreen(
                             expanded = colorSchemeExpanded,
                             onDismissRequest = { colorSchemeExpanded = false }
                         ) {
-                            ColorSchemeMode.values().filter { mode ->
+                            ColorSchemeMode.entries.filter { mode ->
                                 mode != ColorSchemeMode.NATIVE || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                             }.forEach { mode ->
                                 DropdownMenuItem(
@@ -338,7 +339,7 @@ fun SettingsScreen(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
-                            AppMode.values().forEach { mode ->
+                            AppMode.entries.forEach { mode ->
                                 DropdownMenuItem(
                                     text = {
                                         Column {
@@ -370,7 +371,8 @@ fun SettingsScreen(
                             Text(text = stringResource(R.string.schunt_folders), style = MaterialTheme.typography.titleMedium)
                             OutlinedButton(
                                 onClick = {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/FMZNkdv/SCHunt"))
+                                    val intent = Intent(Intent.ACTION_VIEW,
+                                        "https://github.com/FMZNkdv/SCHunt".toUri())
                                     context.startActivity(intent)
                                 }
                             ) {
@@ -405,7 +407,7 @@ fun SettingsScreen(
                                     try {
                                         val info = context.packageManager.getApplicationInfo(pkg, 0)
                                         context.packageManager.getApplicationLabel(info).toString()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                         pkg
                                     }
                                 }
@@ -471,7 +473,7 @@ fun SettingsScreen(
                                                 val label = try {
                                                     val info = context.packageManager.getApplicationInfo(pkg, 0)
                                                     context.packageManager.getApplicationLabel(info).toString()
-                                                } catch (e: Exception) {
+                                                } catch (_: Exception) {
                                                     pkg
                                                 }
                                                 ListItem(
@@ -509,9 +511,9 @@ fun SettingsScreen(
             )
             val rawVersion = remember {
                 try {
-                    context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "5.0-tsu"
-                } catch (e: Exception) {
-                    "unknown"
+                    context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "unknown"
+                } catch (_: Exception) {
+                    "unknown (failed)"
                 }
             }
             val appVersion = "$rawVersion (${stringResource(R.string.version_codename)})"
@@ -533,7 +535,8 @@ fun SettingsScreen(
                     ) {
                         OutlinedButton(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/NotCat40/SCEventFishing"))
+                                val intent = Intent(Intent.ACTION_VIEW,
+                                    "https://github.com/NotCat40/SCEventFishing".toUri())
                                 context.startActivity(intent)
                             },
                             modifier = Modifier.weight(1f)
@@ -542,7 +545,8 @@ fun SettingsScreen(
                         }
                         OutlinedButton(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/sceventfishing"))
+                                val intent = Intent(Intent.ACTION_VIEW,
+                                    "https://t.me/sceventfishing".toUri())
                                 context.startActivity(intent)
                             },
                             modifier = Modifier.weight(1f)
@@ -558,10 +562,10 @@ fun SettingsScreen(
 
 fun friendlyFolderPath(uriString: String): String {
     return try {
-        val docId = DocumentsContract.getTreeDocumentId(Uri.parse(uriString))
+        val docId = DocumentsContract.getTreeDocumentId(uriString.toUri())
         val path = docId.substringAfter(':', missingDelimiterValue = docId)
         Uri.decode(path).removePrefix("/storage/emulated/0/")
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         uriString
     }
 }

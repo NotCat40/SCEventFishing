@@ -30,6 +30,7 @@
     <string name="copied_items_toast">Copied %1$d items</string>
     <string name="extracted_files_toast">Extracted %1$d files</string>
     <string name="could_not_launch">Could not launch</string>
+    <string name="no_monitored_apps">No monitored apps installed.</string>
 
     <!-- SettingsActivity -->
     <string name="back">Back</string>
@@ -62,6 +63,7 @@
     <string name="select_app_to_add">Select app to add</string>
     <string name="remove_schunt_target">Remove target</string>
     <string name="no_schunt_targets">No SCHunt targets configured.</string>
+    <string name="no_installed_schunt_targets">Configured SCHunt targets are not installed.</string>
     <string name="configure_schunt">Configure SCHunt folder</string>
     <string name="cancel">Cancel</string>
 
@@ -115,7 +117,6 @@
 
     <!-- Legacy -->
     <string name="enable_overlay">Enable Overlay</string>
-    <string name="no_monitored_apps">No monitored apps installed.</string>
     <string name="root_status_checking">Root status: Checking..</string>
     <string name="root_granted">Root access granted.</string>
     <string name="no_event_files_beta">No .sc files found or directory does not exist.</string>

@@ -30,6 +30,7 @@
     <string name="copied_items_toast">Скопировано элементов: %1$d</string>
     <string name="extracted_files_toast">Извлечено файлов: %1$d</string>
     <string name="could_not_launch">Не удалось запустить</string>
+    <string name="no_monitored_apps">Нет установленных отслеживаемых приложений.</string>
 
     <!-- SettingsActivity -->
     <string name="back">Назад</string>
@@ -62,6 +63,7 @@
     <string name="select_app_to_add">Выберите приложение</string>
     <string name="remove_schunt_target">Удалить таргет</string>
     <string name="no_schunt_targets">Нет настроенных таргетов SCHunt.</string>
+    <string name="no_installed_schunt_targets">Настроенные таргеты SCHunt не установлены.</string>
     <string name="configure_schunt">Настроить папку SCHunt</string>
     <string name="cancel">Отмена</string>
 
@@ -91,7 +93,7 @@
     <!-- color_scheme_schunt SCHunt -->
     <!-- color_scheme_crona The Crona API -->
     <!-- color_scheme_purple_sunset Purple Sunset -->
-    <string name="color_scheme_native">Native (Android 12+)</string>
+    <!-- color_scheme_native Native (Android 12+) -->
 
     <!-- SCEventFishing for Crona API -->
     <string name="app_name_crona">SCEventFishing для Crona API</string>
@@ -115,7 +117,6 @@
 
     <!-- Legacy -->
     <string name="enable_overlay">Включить оверлей</string>
-    <string name="no_monitored_apps">Нет установленных отслеживаемых приложений.</string>
     <string name="root_status_checking">Статус Root: Проверка..</string>
     <string name="root_granted">Root-права предоставлены.</string>
     <string name="no_event_files_beta">Файлы .sc не найдены или директория не существует.</string>
