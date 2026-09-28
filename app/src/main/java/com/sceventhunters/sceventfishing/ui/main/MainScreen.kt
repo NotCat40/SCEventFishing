@@ -44,8 +44,10 @@ import com.sceventhunters.sceventfishing.data.repository.*
 import android.content.pm.ActivityInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.sceventhunters.sceventfishing.ui.settings.friendlyFolderPath
 import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
+import com.sceventhunters.sceventfishing.ui.theme.componentColors
 import com.sceventhunters.sceventfishing.ui.util.LockScreenOrientation
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
 import com.sceventhunters.sceventfishing.util.*
@@ -113,10 +115,22 @@ fun AppContent(modifier: Modifier = Modifier) {
     var brawlstarsAppList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
     var clashRoyaleAppList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
 
-    LaunchedEffect(refreshTrigger) {
+    LaunchedEffect(refreshTrigger, appMode) {
         withContext(Dispatchers.IO) {
-            brawlstarsAppList = brawlstarsPackages.map { getAppInfo(packageManager, it) }
-            clashRoyaleAppList = clashRoyalePackages.map { getAppInfo(packageManager, it) }
+            if (appMode == AppMode.DEMO) {
+                brawlstarsAppList = listOf(
+                    AppInfo(
+                        appName = "Brawl Stars",
+                        packageName = "com.supercell.brawlstars",
+                        icon = ContextCompat.getDrawable(context, R.mipmap.ic_launcher),
+                        isInstalled = true
+                    )
+                )
+                clashRoyaleAppList = emptyList()
+            } else {
+                brawlstarsAppList = brawlstarsPackages.map { getAppInfo(packageManager, it) }
+                clashRoyaleAppList = clashRoyalePackages.map { getAppInfo(packageManager, it) }
+            }
         }
     }
     val installedBrawlstarsApps = remember(brawlstarsAppList, appMode, schuntPackages) {
@@ -293,13 +307,13 @@ fun AppContent(modifier: Modifier = Modifier) {
                             }
                             Surface(
                                 shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer,
+                                color = MaterialTheme.componentColors.badgeBackground,
                                 modifier = Modifier.padding(vertical = 2.dp)
                             ) {
                                 Text(
                                     text = modeLabel,
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    color = MaterialTheme.componentColors.badgeContent,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                                 )
                             }
@@ -638,7 +652,12 @@ fun AppContent(modifier: Modifier = Modifier) {
 
 @Composable
 fun AppListItem(appInfo: AppInfo, isSelected: Boolean, onAppSelected: (AppInfo) -> Unit) {
-    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
+    val backgroundColor = if (isSelected) MaterialTheme.componentColors.selectedAppBackground else Color.Transparent
+    val textColor = if (appInfo.isInstalled) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.componentColors.uninstalledAppText
+    }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -658,7 +677,7 @@ fun AppListItem(appInfo: AppInfo, isSelected: Boolean, onAppSelected: (AppInfo) 
         Text(
             text = appInfo.appName,
             style = MaterialTheme.typography.titleMedium,
-            color = if (appInfo.isInstalled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = textColor
         )
     }
 }
@@ -786,7 +805,8 @@ fun AppDetail(
                         File(filePath).name
                     }
                     val isProcessed = extractedFileNames.contains(fileName) || sessionProcessedFiles.contains(fileName)
-                    val itemColor = if (isProcessed) MaterialTheme.colorScheme.primary else Color.Red
+                    val itemColor = if (isProcessed) MaterialTheme.componentColors.processedFile else MaterialTheme.componentColors.rawFile
+                    val iconTint = if (isProcessed) MaterialTheme.componentColors.processedFileIcon else MaterialTheme.componentColors.rawFileIcon
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -801,7 +821,7 @@ fun AppDetail(
                             }
                             .padding(vertical = 2.dp)
                     ) {
-                        Icon(Icons.Default.Description, contentDescription = null, modifier = Modifier.size(18.dp), tint = itemColor)
+                        Icon(Icons.Default.Description, contentDescription = null, modifier = Modifier.size(18.dp), tint = iconTint)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = fileName, color = itemColor, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                         Icon(
@@ -815,7 +835,7 @@ fun AppDetail(
                                     }
                                 }
                             },
-                            tint = itemColor
+                            tint = iconTint
                         )
                     }
                 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.DocumentsContract
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import com.sceventhunters.sceventfishing.data.model.AppMode
 import com.sceventhunters.sceventfishing.data.repository.*
 import com.sceventhunters.sceventfishing.ui.theme.ColorSchemeMode
 import com.sceventhunters.sceventfishing.ui.theme.ThemeMode
+import com.sceventhunters.sceventfishing.ui.theme.componentColors
 import com.sceventhunters.sceventfishing.ui.util.rememberPreference
 import com.sceventhunters.sceventfishing.util.clearEventFilesCache
 
@@ -87,7 +89,7 @@ fun SettingsScreen(
             Text(
                 text = stringResource(R.string.general_settings),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.componentColors.sectionHeader,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             ElevatedCard(
@@ -162,7 +164,7 @@ fun SettingsScreen(
             Text(
                 text = stringResource(R.string.visuals),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.componentColors.sectionHeader,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             ElevatedCard(
@@ -219,8 +221,10 @@ fun SettingsScreen(
                     ) {
                         val colorSchemeText = when(colorSchemeMode) {
                             ColorSchemeMode.GREEN_ROOT -> stringResource(R.string.color_scheme_green)
+                            ColorSchemeMode.SCHUNT -> stringResource(R.string.color_scheme_schunt)
                             ColorSchemeMode.PURPLE_SUNSET -> stringResource(R.string.color_scheme_purple_sunset)
                             ColorSchemeMode.CRONA_API -> stringResource(R.string.color_scheme_crona)
+                            ColorSchemeMode.NATIVE -> stringResource(R.string.color_scheme_native)
                         }
                         OutlinedTextField(
                             value = colorSchemeText,
@@ -234,13 +238,17 @@ fun SettingsScreen(
                             expanded = colorSchemeExpanded,
                             onDismissRequest = { colorSchemeExpanded = false }
                         ) {
-                            ColorSchemeMode.values().forEach { mode ->
+                            ColorSchemeMode.values().filter { mode ->
+                                mode != ColorSchemeMode.NATIVE || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                            }.forEach { mode ->
                                 DropdownMenuItem(
                                     text = {
                                         val label = when(mode) {
                                             ColorSchemeMode.GREEN_ROOT -> stringResource(R.string.color_scheme_green)
+                                            ColorSchemeMode.SCHUNT -> stringResource(R.string.color_scheme_schunt)
                                             ColorSchemeMode.PURPLE_SUNSET -> stringResource(R.string.color_scheme_purple_sunset)
                                             ColorSchemeMode.CRONA_API -> stringResource(R.string.color_scheme_crona)
+                                            ColorSchemeMode.NATIVE -> stringResource(R.string.color_scheme_native)
                                         }
                                         Text(label)
                                     },
@@ -306,7 +314,7 @@ fun SettingsScreen(
             Text(
                 text = stringResource(R.string.operation_mode),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.componentColors.sectionHeader,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             ElevatedCard(
@@ -496,7 +504,7 @@ fun SettingsScreen(
             Text(
                 text = stringResource(R.string.about),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.componentColors.sectionHeader,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             val rawVersion = remember {
@@ -561,7 +569,7 @@ fun friendlyFolderPath(uriString: String): String {
 @Composable
 fun AboutItem(label: String, value: String) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(text = label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+        Text(text = label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.componentColors.sectionHeader)
         Text(text = value, style = MaterialTheme.typography.bodyLarge)
     }
 }

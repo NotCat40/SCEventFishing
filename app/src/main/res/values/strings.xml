@@ -88,8 +88,10 @@
     <string name="select_theme">Select Theme</string>
     <string name="select_color_scheme">Select Color</string>
     <string name="color_scheme_green" translatable="false">Green Root</string>
+    <string name="color_scheme_schunt" translatable="false">SCHunt</string>
     <string name="color_scheme_crona" translatable="false">The Crona API</string>
     <string name="color_scheme_purple_sunset" translatable="false">Purple Sunset</string>
+    <string name="color_scheme_native" translatable="false">Native (Android 12+)</string>
 
     <!-- SCEventFishing for Crona API -->
     <string name="app_name_crona">SCEventFishing for Crona API</string>
