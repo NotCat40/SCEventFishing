@@ -13,12 +13,19 @@ import com.sceventhunters.sceventfishing.R
 import com.sceventhunters.sceventfishing.data.model.AppMode
 import java.io.File
 
-fun getBaseUrlForPackage(packageName: String): String {
-    return when (packageName) {
-        "com.tencent.tmgp.supercell.brawlstars" -> "https://event-assets.tencent-cloud.com/"
+fun getBaseUrlForPackage(context: Context, packageName: String): String {
+    if (packageName == "com.tencent.tmgp.supercell.brawlstars" || packageName == "com.tencent.tmgp.supercell.clashroyale") {
+        return "https://event-assets.tencent-cloud.com/"
+    }
+    val baseUrl = when (packageName) {
         "com.supercell.clashroyale" -> "https://event-assets.clashroyale.com/"
-        "com.tencent.tmgp.supercell.clashroyale" -> "https://event-assets.tencent-cloud.com/"
         else -> "https://event-assets.brawlstars.com/"
+    }
+    val cdnVersion = com.sceventhunters.sceventfishing.data.repository.loadCdnVersion(context)
+    return if (cdnVersion == "event-assets-2") {
+        baseUrl.replace("event-assets.", "event-assets-2.")
+    } else {
+        baseUrl
     }
 }
 
@@ -43,7 +50,7 @@ fun copyUrlsToClipboard(
 ) {
     if (eventFiles.isEmpty()) return
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val baseUrl = getBaseUrlForPackage(packageName)
+    val baseUrl = getBaseUrlForPackage(context, packageName)
     val allText = eventFiles.joinToString("\n") { filePath ->
         val fileName = getFileName(context, filePath)
         if (copyWithoutLink) fileName else baseUrl + fileName

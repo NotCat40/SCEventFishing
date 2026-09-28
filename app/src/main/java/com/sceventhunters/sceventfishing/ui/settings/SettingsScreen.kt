@@ -60,8 +60,10 @@ fun SettingsScreen(
     var themeExpanded by remember { mutableStateOf(false) }
     var colorSchemeExpanded by remember { mutableStateOf(false) }
     var langExpanded by remember { mutableStateOf(false) }
+    var cdnExpanded by remember { mutableStateOf(false) }
     val copyWithoutLink = rememberPreference(context, KEY_COPY_WITHOUT_LINK) { loadCopyWithoutLink(it) }
     val filterUiFiles = rememberPreference(context, KEY_FILTER_UI_FILES) { loadFilterUiFiles(it) }
+    val cdnVersion = rememberPreference(context, KEY_CDN_VERSION) { loadCdnVersion(it) }
     val appMode = rememberPreference(context, KEY_APP_MODE) { loadAppMode(it) }
     val colorSchemeMode = rememberPreference(context, KEY_COLOR_SCHEME) { loadColorScheme(it) }
     val exportFolderUri = rememberPreference(context, KEY_EXPORT_FOLDER_URI) { loadExportFolderUri(it) }
@@ -154,6 +156,39 @@ fun SettingsScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(stringResource(R.string.select_folder))
+                        }
+                    }
+
+                    if (!copyWithoutLink) {
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        ExposedDropdownMenuBox(
+                            expanded = cdnExpanded,
+                            onExpandedChange = { cdnExpanded = !cdnExpanded },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            OutlinedTextField(
+                                value = cdnVersion,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text(stringResource(R.string.cdn_version_label)) },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = cdnExpanded) },
+                                modifier = Modifier.menuAnchor().fillMaxWidth()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = cdnExpanded,
+                                onDismissRequest = { cdnExpanded = false }
+                            ) {
+                                listOf("event-assets", "event-assets-2").forEach { cdn ->
+                                    DropdownMenuItem(
+                                        text = { Text(cdn) },
+                                        onClick = {
+                                            saveCdnVersion(context, cdn)
+                                            cdnExpanded = false
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }

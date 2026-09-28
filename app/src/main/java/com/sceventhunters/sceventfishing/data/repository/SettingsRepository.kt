@@ -20,6 +20,7 @@ const val KEY_PROCESSED_FILES = "processed"
 const val KEY_SELECTED_PACKAGE = "selected"
 const val KEY_LANGUAGE = "language"
 const val KEY_FILTER_UI_FILES = "filter_ui_files"
+const val KEY_CDN_VERSION = "cdn_version"
 
 fun saveLanguage(context: Context, languageCode: String) {
     context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_LANGUAGE, languageCode).apply()
@@ -145,6 +146,14 @@ fun saveFilterUiFiles(context: Context, value: Boolean) {
 
 fun loadFilterUiFiles(context: Context): Boolean {
     return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getBoolean(KEY_FILTER_UI_FILES, true)
+}
+
+fun saveCdnVersion(context: Context, version: String) {
+    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(KEY_CDN_VERSION, version).apply()
+}
+
+fun loadCdnVersion(context: Context): String {
+    return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(KEY_CDN_VERSION, "event-assets") ?: "event-assets"
 }
 
 fun loadColorScheme(context: Context): ColorSchemeMode {

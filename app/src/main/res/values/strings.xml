@@ -41,6 +41,7 @@
     <string name="copy_without_link_desc">Only copy file names without prefix</string>
     <string name="filter_ui_files">Filter out .ui files</string>
     <string name="filter_ui_files_desc">Exclude .ui files from event files list</string>
+    <string name="cdn_version_label">Preferred CDN prefix</string>
     <string name="export_folder">Export folder</string>
     <string name="export_folder_desc">Select where to save extracted files</string>
 
@@ -123,6 +124,7 @@
     <string name="no_event_files_cdu">No .sc files found.</string>
     <string name="event_files_found_cdu">%1$d .sc files found:</string>
     <string name="select_app_hint_tablet_update">Select an installed app from the list on the left to see its details and find .sc files.</string>
+    <string name="cdn_version_desc">Select CDN domain for event assets</string>
 
     <!-- Ui fish text -->
     <string name="mewgenics">I love Mewgenics</string>

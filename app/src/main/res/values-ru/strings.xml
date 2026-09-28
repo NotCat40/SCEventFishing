@@ -41,6 +41,7 @@
     <string name="copy_without_link_desc">Копировать только имена файлов без префикса</string>
     <string name="filter_ui_files">Отсеивать .ui файлы</string>
     <string name="filter_ui_files_desc">Исключать .ui файлы из списка файлов событий</string>
+    <string name="cdn_version_label">Предпочтительный CDN префикс</string>
     <string name="export_folder">Папка для экспорта</string>
     <string name="export_folder_desc">Выберите, куда сохранять извлеченные файлы</string>
 
@@ -123,6 +124,7 @@
     <string name="no_event_files_cdu">Файлы .sc не найдены.</string>
     <string name="event_files_found_cdu">Найдено .sc файлов: %1$d</string>
     <string name="select_app_hint_tablet_update">Выберите установленное приложение из списка слева, чтобы увидеть подробности и найти .sc файлы.</string>
+    <string name="cdn_version_desc">Выберите домен CDN для файлов событий</string>
 
     <!-- Ui fish text -->
     <string name="mewgenics">Я люблю Mewgenics</string>

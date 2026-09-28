@@ -1,12 +1,11 @@
 package com.sceventhunters.sceventfishing.ui.main
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -42,11 +41,8 @@ import com.sceventhunters.sceventfishing.data.model.AppInfo
 import com.sceventhunters.sceventfishing.data.model.AppMode
 import com.sceventhunters.sceventfishing.data.repository.*
 import android.content.pm.ActivityInfo
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.content.ContextCompat
-import com.sceventhunters.sceventfishing.ui.settings.friendlyFolderPath
 import com.sceventhunters.sceventfishing.ui.theme.SCEventFishingTheme
 import com.sceventhunters.sceventfishing.ui.theme.componentColors
 import com.sceventhunters.sceventfishing.ui.util.LockScreenOrientation
@@ -56,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -717,6 +714,7 @@ fun AppListItem(appInfo: AppInfo, isSelected: Boolean, onAppSelected: (AppInfo) 
     }
 }
 
+@SuppressLint("UseKtx")
 @Composable
 fun AppDetail(
     appInfo: AppInfo,
@@ -835,7 +833,7 @@ fun AppDetail(
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 eventFiles.forEach { filePath ->
                     val fileName = if (filePath.startsWith("content://")) {
-                        DocumentFile.fromSingleUri(context, Uri.parse(filePath))?.name ?: "unknown"
+                        DocumentFile.fromSingleUri(context, filePath.toUri())?.name ?: "unknown"
                     } else {
                         File(filePath).name
                     }
@@ -849,7 +847,7 @@ fun AppDetail(
                             .fillMaxWidth()
                             .clickable {
                                 val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val textToCopy = if (copyWithoutLink) fileName else getBaseUrlForPackage(appInfo.packageName) + fileName
+                                val textToCopy = if (copyWithoutLink) fileName else getBaseUrlForPackage(context, appInfo.packageName) + fileName
                                 clipboardManager.setPrimaryClip(ClipData.newPlainText(fileName, textToCopy))
                                 onSessionFilesChanged(sessionProcessedFiles + fileName)
                                 Toast.makeText(context, context.getString(R.string.copied_toast, textToCopy), Toast.LENGTH_SHORT).show()
@@ -906,7 +904,7 @@ fun getAppInfo(packageManager: PackageManager, packageName: String): AppInfo {
             icon = packageManager.getApplicationIcon(appInfo),
             isInstalled = true
         )
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         AppInfo(appName = packageName, packageName = packageName, icon = null, isInstalled = false)
     }
 }
